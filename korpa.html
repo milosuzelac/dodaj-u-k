@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vaša Korpa</title>
+    <style>
+        .cart {
+            margin-top: 20px;
+            font-family: 'Helvetica', sans-serif;
+            font-size: 11px;
+        }
+
+        .remove-btn {
+            margin-left: 10px;
+            padding: 5px 10px;
+            background-color: #FF0000;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .remove-btn:hover {
+            background-color: #cc0000;
+        }
+
+        .back-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 11px;
+            font-family: 'Helvetica', sans-serif;
+        }
+
+        .back-btn:hover {
+            background-color: #0069d9;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Vaša Korpa</h1>
+
+    <!-- Prikaz korpe -->
+    <div class="cart">
+        <ul id="korpa-lista"></ul>
+        <p><strong>Ukupno:</strong> <span id="ukupno-cena">0</span> €</p>
+    </div>
+
+    <!-- Dugme za povratak -->
+    <button class="back-btn" onclick="nazad()">Nazad u prodavnicu</button>
+
+    <script>
+        // Funkcija za prikaz korpe iz localStorage
+        function prikaziKorpu() {
+            const korpa = JSON.parse(localStorage.getItem('korpa')) || [];
+            const korpaLista = document.getElementById('korpa-lista');
+            const ukupnoCenaElement = document.getElementById('ukupno-cena');
+
+            let ukupnoCena = 0;
+
+            // Očistimo trenutnu listu pre dodavanja
+            korpaLista.innerHTML = '';
+
+            // Prikaz svakog artikla u korpi sa dugmetom za brisanje
+            korpa.forEach((item, index) => {
+                let li = document.createElement('li');
+                li.textContent = `${item.naziv} - ${item.cena}€`;
+                
+                // Kreiraj dugme za brisanje
+                let removeBtn = document.createElement('button');
+                removeBtn.textContent = 'Obriši';
+                removeBtn.className = 'remove-btn';
+                removeBtn.onclick = function() {
+                    obrisiArtikal(index);
+                };
+
+                // Dodaj artikal i dugme za brisanje u listu
+                li.appendChild(removeBtn);
+                korpaLista.appendChild(li);
+
+                ukupnoCena += item.cena;
+            });
+
+            // Prikaz ukupne cene
+            ukupnoCenaElement.textContent = ukupnoCena.toFixed(2);
+        }
+
+        // Funkcija za brisanje artikla iz korpe
+        function obrisiArtikal(index) {
+            let korpa = JSON.parse(localStorage.getItem('korpa')) || [];
+
+            // Uklanjamo artikal na osnovu index-a
+            korpa.splice(index, 1);
+
+            // Ažuriramo localStorage sa novom korpom
+            localStorage.setItem('korpa', JSON.stringify(korpa));
+
+            // Ponovo prikažemo korpu da osvežimo listu
+            prikaziKorpu();
+        }
+
+        // Funkcija za povratak u prodavnicu
+        function nazad() {
+            window.location.href = 'index.html'; // Promeni ovo u URL tvoje glavne stranice
+        }
+
+        // Pozivanje funkcije za prikaz korpe pri učitavanju stranice
+        prikaziKorpu();
+    </script>
+
+</body>
+</html>
